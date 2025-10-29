@@ -1,0 +1,47 @@
+# ==================================================
+# .gitignore pour Projet Data Engineering Retail
+# ==================================================
+
+# Clés et secrets GCP
+*.json
+!gcp-key-example.json
+gcp-key.json
+config/gcp-key.json
+
+# Données sensibles
+*.csv
+*.xlsx
+data/
+!data/sample_data.csv
+
+# Airflow
+logs/
+airflow.db
+airflow.cfg
+standalone_admin_password.txt
+webserver_config.py
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
