@@ -93,6 +93,85 @@ J'ai créé 3 dashboards pour analyser les résultats :
 
 ---
 
+## Insights Business & Recommandations
+
+Au-delà de la stack technique, l'exploitation de ces données a permis d'identifier plusieurs constats critiques et opportunités stratégiques pour le retail.
+
+### Baisse du Chiffre d'Affaires (2022-2023)
+
+Le CA a significativement diminué entre 2022 et 2023. Quand on voit la courbe descendre comme ça, ça sent pas bon. C'est le type de signal qui doit faire tiquer n'importe quel directeur commercial et nécessite une analyse approfondie des causes : perte de parts de marché face à la concurrence, stratégie pricing inadaptée, mix produit à revoir, ou impact d'événements externes (inflation, pouvoir d'achat).
+
+Action prioritaire : identifier rapidement les leviers de redressement avant que la tendance ne s'aggrave.
+
+### Surstock Critique (194% de couverture)
+
+La couverture de stock moyenne atteint 194%, soit presque 2 fois plus de stock que nécessaire.
+
+Conséquences business :
+- Capital immobilisé : ressources financières bloquées qui pourraient être investies ailleurs
+- Coûts de stockage : loyers d'entrepôt, manutention, assurances qui explosent
+- Risque de démarque : obsolescence des produits, détérioration, invendus à brader
+
+Calcul approximatif : avec un CA de 550M€ et un taux de marge de 82%, avoir 94% de stock en trop représente environ 38% du capital immobilisé inutilement.
+
+Recommandation : réduire les commandes fournisseurs pour ajuster le stock au niveau optimal, accélérer la rotation via des promotions ciblées sur les produits à forte couverture, améliorer la précision des prévisions de demande.
+
+### ROI Promotionnel Exceptionnel (450%)
+
+Chaque euro investi en promotion rapporte 4,50€. C'est énorme. Ce ROI très élevé n'est pas juste un chiffre, c'est une opportunité stratégique majeure sous-exploitée.
+
+Recommandation stratégique : avec un ROI pareil, on pourrait baisser légèrement les prix de base (exemple : -3 à -5%) et compenser avec encore plus de promotions (fréquence et agressivité accrues).
+
+Résultat attendu : prix affichés plus attractifs que la concurrence, génération de volume de ventes (et c'est rentable vu le ROI), accélération de la rotation des stocks (bye bye le surstock), marge maintenue voire améliorée grâce au ROI élevé.
+
+Benchmark : c'est exactement la stratégie utilisée par Decathlon, H&M ou Kiabi. Prix corrects + promotions fréquentes = trafic + volume + fidélisation.
+
+### Prévisions de Demande Performantes (3,6% d'écart)
+
+Le modèle de prévision affiche un écart moyen de seulement 3,6% entre les prévisions et les ventes réelles. C'est plutôt bon.
+
+Cependant, une optimisation supplémentaire permettrait de réduire encore l'écart (objectif < 2%), améliorer la précision des commandes fournisseurs, et minimiser les ruptures de stock ET le surstock.
+
+Piste d'amélioration : intégrer des modèles de Machine Learning (ARIMA, Prophet, ou modèles supervisés) pour capturer la saisonnalité et les tendances plus finement.
+
+### Positionnement Prix Neutre (-0,02% vs concurrent)
+
+Prix moyen : 55,14€  
+Prix concurrent : 55,15€  
+Écart : -0,02%
+
+On est pile au même niveau que la concurrence. Ni plus chers, ni moins chers.
+
+Question stratégique : comment attirer les clients vers nous plutôt que vers eux ?
+
+Recommandation : vu qu'on a un ROI promo de 450%, on peut jouer plus agressivement sur ce levier.
+
+Option 1 : Prix légèrement en dessous + promos fréquentes → image de "bonnes affaires", volume qui augmente, marge compensée par le ROI promo.
+
+Option 2 : Même prix MAIS promos plus agressives → -30%, -40%, -50% réguliers, crée du trafic et de l'urgence, fidélisation (les clients attendent les promos).
+
+Dans les deux cas, on utilise notre atout (ROI promo énorme) pour se différencier sans détruire la marge.
+
+Parce que la vraie question c'est pas "quel prix ?" mais "pourquoi acheter chez nous ?". Et avec les bonnes données, on peut répondre à cette question avec des chiffres, pas des intuitions.
+
+### Synthèse des Leviers d'Action
+
+| Problème Identifié | Impact Business | Action Recommandée |
+|---------------------|-----------------|-------------------|
+| Baisse CA 2022-2023 | Perte de revenus, alerte stratégique | Analyse causes racines + plan d'action commercial urgent |
+| Surstock 194% | Capital immobilisé (38%), coûts de stockage élevés | Réduction commandes + promotions ciblées |
+| ROI promo 450% | Opportunité sous-exploitée | Stratégie pricing dynamique (prix base en baisse, promos en hausse) |
+| Prix = concurrent | Manque de différenciation | Exploiter le levier promotionnel pour se démarquer |
+| Écart prévisions 3,6% | Optimisation possible | Améliorer les modèles de forecast (ML) |
+
+### Ce que ça m'a appris
+
+La data dans le retail, c'est pas juste des chiffres et des dashboards. C'est comprendre des enjeux business concrets : marge, rotation des stocks, élasticité prix, saisonnalité. C'est transformer des lignes Excel en décisions stratégiques actionnables qui impactent directement le CA, les stocks, et la rentabilité.
+
+Et c'est exactement ce qui me plaît dans la data.
+
+---
+
 ## Installation
 
 Si vous voulez reproduire le projet ou l'adapter, voici les étapes principales.
@@ -132,7 +211,7 @@ Interface Airflow accessible sur `http://localhost:8080` (login: airflow / airfl
 
 Uploader le fichier CSV dans Cloud Storage, puis créer la table dans BigQuery :
 ```sql
-LOAD DATA INTO `pipeline-etl-retail.retail_data_warehouse.raw_retail`
+LOAD DATA INTO \`pipeline-etl-retail.retail_data_warehouse.raw_retail\`
 FROM FILES (
   format = 'CSV',
   uris = ['gs://bucket-retailll/retail_store_data.csv'],
@@ -152,36 +231,36 @@ Le DAG s'exécute automatiquement chaque jour, ou vous pouvez le trigger manuell
 La transformation agrège les données brutes pour créer une table de KPIs quotidiens. Voici la logique :
 
 ```sql
-CREATE OR REPLACE TABLE `pipeline-etl-retail.retail_data_warehouse.retail_daily_kpis` AS
+CREATE OR REPLACE TABLE \`pipeline-etl-retail.retail_data_warehouse.retail_daily_kpis\` AS
 SELECT
     -- Dimensions pour le groupement
     Date,
-    `Store ID` AS store_id,
-    `Product ID` AS product_id,
+    \`Store ID\` AS store_id,
+    \`Product ID\` AS product_id,
     Category AS product_category,
     Region AS store_region,
-    `Weather Condition` AS weather_condition,
-    `Holiday_Promotion` AS holiday_promotion_status,
+    \`Weather Condition\` AS weather_condition,
+    \`Holiday_Promotion\` AS holiday_promotion_status,
     Seasonality AS seasonality,
 
     -- Métriques de vente
-    ROUND(SUM(`Units Sold`), 2) AS total_units_sold,
-    ROUND(SUM(Price * `Units Sold`), 2) AS daily_revenue,
+    ROUND(SUM(\`Units Sold\`), 2) AS total_units_sold,
+    ROUND(SUM(Price * \`Units Sold\`), 2) AS daily_revenue,
 
     -- Métriques de stock
-    ROUND(AVG(`Inventory Level`), 2) AS average_inventory_level,
-    ROUND(SUM(`Units Ordered`), 2) AS total_units_ordered,
-    ROUND(AVG(`Demand Forecast`), 2) AS average_demand_forecast,
+    ROUND(AVG(\`Inventory Level\`), 2) AS average_inventory_level,
+    ROUND(SUM(\`Units Ordered\`), 2) AS total_units_ordered,
+    ROUND(AVG(\`Demand Forecast\`), 2) AS average_demand_forecast,
 
     -- Métriques de prix
     ROUND(AVG(Price), 2) AS average_product_price,
     ROUND(AVG(Discount), 2) AS average_discount_rate,
-    ROUND(AVG(`Competitor Pricing`), 2) AS average_competitor_price
+    ROUND(AVG(\`Competitor Pricing\`), 2) AS average_competitor_price
 
-FROM `pipeline-etl-retail.retail_data_warehouse.raw_retail`
-GROUP BY Date, `Store ID`, `Product ID`, Category, Region, 
-         `Weather Condition`, `Holiday_Promotion`, Seasonality
-ORDER BY Date, `Store ID`, `Product ID`;
+FROM \`pipeline-etl-retail.retail_data_warehouse.raw_retail\`
+GROUP BY Date, \`Store ID\`, \`Product ID\`, Category, Region, 
+         \`Weather Condition\`, \`Holiday_Promotion\`, Seasonality
+ORDER BY Date, \`Store ID\`, \`Product ID\`;
 ```
 
 Rien de complexe, mais ça permet d'avoir une table propre et agrégée pour alimenter Power BI.
